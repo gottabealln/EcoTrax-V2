@@ -71,9 +71,9 @@ class _RefillSheetState extends State<RefillSheet> {
     return Material(
       color: Colors.transparent,
       child: Container(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.92),
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.95),
         decoration: const BoxDecoration(
-          color: EcoColors.bgLow,
+          color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
         ),
         child: SingleChildScrollView(
@@ -87,67 +87,46 @@ class _RefillSheetState extends State<RefillSheet> {
                   child: Container(
                     margin: const EdgeInsets.only(top: 12, bottom: 16),
                     width: 48, height: 6,
-                    decoration: BoxDecoration(color: EcoColors.outline.withOpacity(0.4), borderRadius: BorderRadius.circular(3)),
+                    decoration: BoxDecoration(color: EcoColors.outline.withOpacity(0.3), borderRadius: BorderRadius.circular(3)),
                   ),
                 ),
 
                 // Header
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.local_gas_station, color: EcoColors.primary, size: 20),
-                              const SizedBox(width: 8),
-                              Text("Log New Refill", style: EcoText.h2.copyWith(fontSize: 22)),
-                            ],
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(color: EcoColors.primaryContainer, shape: BoxShape.circle),
+                            child: const Icon(Icons.local_gas_station, color: EcoColors.primary, size: 20),
                           ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(color: EcoColors.bgHighest, borderRadius: BorderRadius.circular(10)),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.circle, size: 6, color: EcoColors.tertiary),
-                                    const SizedBox(width: 4),
-                                    Text("Swift · VXi 2019", style: EcoText.label.copyWith(fontSize: 10)),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text("Trip cycle #28", style: EcoText.label.copyWith(fontSize: 11, color: EcoColors.outline)),
-                            ],
-                          )
+                          const SizedBox(width: 12),
+                          Text("Log New Refill", style: EcoText.h1.copyWith(fontSize: 22)),
                         ],
                       ),
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: Container(
                           padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(color: EcoColors.bgHighest, shape: BoxShape.circle),
+                          decoration: const BoxDecoration(color: EcoColors.bgLow, shape: BoxShape.circle),
                           child: const Icon(Icons.close, size: 18, color: EcoColors.onSurface),
                         ),
                       )
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // Live Calculation Banner
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  margin: const EdgeInsets.symmetric(horizontal: 24),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [EcoColors.primaryContainer.withOpacity(0.2), EcoColors.bgContainer, EcoColors.secondaryContainer.withOpacity(0.2)],
-                    ),
+                    color: EcoColors.bgLow,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -156,30 +135,22 @@ class _RefillSheetState extends State<RefillSheet> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Auto-Estimated Cycle", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.outline)),
+                          Text("ESTIMATED CYCLE", style: EcoText.label.copyWith(fontSize: 9, color: EcoColors.outline)),
                           const SizedBox(height: 4),
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
                             children: [
-                              Text("₹ ${_estTotal.toStringAsFixed(2)}", style: EcoText.bodyStrong.copyWith(fontSize: 16)),
-                              const SizedBox(width: 8),
+                              Text("₹ ${_estTotal.toStringAsFixed(2)}", style: EcoText.mediumNumber.copyWith(fontSize: 18)),
+                              const SizedBox(width: 6),
                               Text("·", style: EcoText.label.copyWith(color: EcoColors.outline)),
-                              const SizedBox(width: 8),
-                              Text("${_estEcon.toStringAsFixed(2)} km/L", style: EcoText.label.copyWith(color: EcoColors.tertiary, fontSize: 13, fontWeight: FontWeight.w600)),
+                              const SizedBox(width: 6),
+                              Text("${_estEcon.toStringAsFixed(2)} km/L", style: EcoText.label.copyWith(color: EcoColors.secondary, fontSize: 13)),
                             ],
                           )
                         ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(color: EcoColors.tertiary.withOpacity(0.15), borderRadius: BorderRadius.circular(8)),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.trending_up, size: 14, color: EcoColors.tertiary),
-                            const SizedBox(width: 4),
-                            Text("+1.2", style: EcoText.label.copyWith(color: EcoColors.tertiary, fontSize: 11)),
-                          ],
-                        ),
-                      )
+                      const Icon(Icons.trending_up, size: 24, color: EcoColors.secondary),
                     ],
                   ),
                 ),
@@ -187,7 +158,7 @@ class _RefillSheetState extends State<RefillSheet> {
 
                 // 2x2 Grid Inputs
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     children: [
                       Row(
@@ -212,12 +183,12 @@ class _RefillSheetState extends State<RefillSheet> {
 
                 // Station Selector
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text("SELECT FUEL BRAND", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.outline)),
                 ),
                 const SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Wrap(
                     spacing: 12, runSpacing: 12,
                     children: FuelStation.values.map((s) {
@@ -225,32 +196,26 @@ class _RefillSheetState extends State<RefillSheet> {
                       return GestureDetector(
                         onTap: () => setState(() => _station = s),
                         child: Container(
-                          width: (MediaQuery.of(context).size.width - 52) / 2,
+                          width: (MediaQuery.of(context).size.width - 60) / 2,
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: isSelected ? EcoColors.primaryContainer.withOpacity(0.2) : EcoColors.bgHighest.withOpacity(0.4),
+                            color: isSelected ? EcoColors.primaryContainer : Colors.white,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: isSelected ? EcoColors.primaryContainer.withOpacity(0.5) : Colors.transparent),
+                            border: Border.all(color: isSelected ? EcoColors.primary : EcoColors.glassBorder),
                           ),
                           child: Row(
                             children: [
                               Container(
-                                width: 24, height: 24,
+                                width: 20, height: 20,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: isSelected ? EcoColors.primaryContainer : s.color.withOpacity(0.2),
+                                  color: isSelected ? EcoColors.primary : EcoColors.bgLow,
                                 ),
-                                child: Icon(isSelected ? Icons.check : Icons.local_gas_station, size: 14, color: isSelected ? EcoColors.onPrimary : s.color),
+                                child: Icon(isSelected ? Icons.check : Icons.local_gas_station, size: 12, color: isSelected ? Colors.white : EcoColors.outline),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 8),
                               Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(s.label, style: EcoText.label.copyWith(color: isSelected ? EcoColors.primary : EcoColors.onSurface, fontSize: 13)),
-                                    Text("Fuel", style: EcoText.label.copyWith(fontSize: 9, color: EcoColors.outline)),
-                                  ],
-                                ),
+                                child: Text(s.label, style: EcoText.label.copyWith(color: isSelected ? EcoColors.primary : EcoColors.onSurface, fontSize: 12)),
                               )
                             ],
                           ),
@@ -263,12 +228,12 @@ class _RefillSheetState extends State<RefillSheet> {
 
                 // Trip Type Selector
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text("TRIP CONDITION", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.outline)),
                 ),
                 const SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
                     children: TripType.values.map((t) {
                       final isSelected = t == _tripType;
@@ -279,7 +244,7 @@ class _RefillSheetState extends State<RefillSheet> {
                             margin: EdgeInsets.only(right: t == TripType.mixed ? 0 : 8),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
-                              color: isSelected ? EcoColors.secondaryContainer.withOpacity(0.4) : EcoColors.bgHighest.withOpacity(0.4),
+                              color: isSelected ? EcoColors.secondaryContainer : EcoColors.bgLow,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Column(
@@ -295,34 +260,30 @@ class _RefillSheetState extends State<RefillSheet> {
                     }).toList(),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
                 // Save Button
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: GestureDetector(
                     onTap: () => _submit(state),
                     child: Container(
-                      height: 56,
+                      height: 52,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(colors: [EcoColors.primaryContainer, EcoColors.primary, EcoColors.secondary]),
-                        borderRadius: BorderRadius.circular(28),
+                        color: EcoColors.onSurface,
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.check_circle, color: EcoColors.onPrimary, size: 24),
+                          const Icon(Icons.check_circle, color: EcoColors.primaryContainer, size: 20),
                           const SizedBox(width: 8),
-                          Text("Save Refill Entry", style: EcoText.h2.copyWith(color: EcoColors.onPrimary)),
+                          Text("Save Refill Entry", style: EcoText.bodyStrong.copyWith(color: Colors.white, fontSize: 15)),
                         ],
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Center(
-                  child: Text("Swipe down to dismiss · Encrypted to local ledger", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.outline)),
-                )
               ],
             ),
           ),
@@ -351,14 +312,17 @@ class _InputBox extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.onSurfaceVariant)),
-        const SizedBox(height: 8),
+        Text(label, style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.outline)),
+        const SizedBox(height: 6),
         Container(
-          decoration: BoxDecoration(color: EcoColors.bgHighest.withOpacity(0.6), borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(color: EcoColors.bgLow, borderRadius: BorderRadius.circular(12)),
           child: TextField(
             controller: controller,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            style: EcoText.bodyStrong.copyWith(fontSize: 18),
+            style: EcoText.mediumNumber.copyWith(
+              fontSize: 16,
+              color: EcoColors.onSurface, // 👈 Explicit dark text
+            ),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: EcoText.body.copyWith(color: EcoColors.outline.withOpacity(0.4)),
@@ -366,9 +330,9 @@ class _InputBox extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               suffixIcon: Container(
                 margin: const EdgeInsets.all(8),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(color: EcoColors.bgHighest, borderRadius: BorderRadius.circular(6)),
-                child: Text(suffix, style: EcoText.label.copyWith(fontSize: 11, color: EcoColors.onSurfaceVariant)),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(color: EcoColors.bgHighest, borderRadius: BorderRadius.circular(4)),
+                child: Text(suffix, style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.onSurfaceVariant)),
               ),
             ),
           ),

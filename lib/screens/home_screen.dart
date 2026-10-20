@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import '../state/app_state.dart';
 import '../theme/colors.dart';
 import '../theme/text_styles.dart';
-import '../widgets/animated_gradient_bg.dart';
 import 'car_setup_screen.dart';
 import 'car_switcher_sheet.dart';
 import 'refill_sheet.dart';
@@ -21,65 +20,61 @@ class HomeScreen extends StatelessWidget {
 
     if (car == null) return const CarSetupScreen(isFirstTime: true);
 
-    return AnimatedGradientBg(
-      child: SafeArea(
+    return Scaffold(
+      backgroundColor: EcoColors.bgLowest,
+      body: SafeArea(
         bottom: false,
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           physics: const BouncingScrollPhysics(),
           children: [
-            // --- Vehicle Header ---
+            // --- Header ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Text("${car.name} · ${car.model}", style: EcoText.h1.copyWith(color: EcoColors.primary)),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(color: EcoColors.bgContainer, borderRadius: BorderRadius.circular(10)),
-                          child: Text("2019", style: EcoText.label.copyWith(fontSize: 10)),
-                        ),
-                      ],
+                    Container(
+                      width: 40, height: 40,
+                      decoration: BoxDecoration(
+                        color: EcoColors.onSurface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.eco, color: Colors.white, size: 20),
                     ),
-                    const SizedBox(height: 6),
-                    Row(
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.speed, size: 14, color: EcoColors.tertiary),
-                        const SizedBox(width: 4),
-                        Text("${state.lastTripMeter.toStringAsFixed(0)} km", style: EcoText.label.copyWith(color: EcoColors.onSurface)),
-                        const SizedBox(width: 8),
-                        Container(width: 3, height: 3, decoration: const BoxDecoration(shape: BoxShape.circle, color: EcoColors.outline)),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.circle, size: 6, color: EcoColors.tertiary),
-                        const SizedBox(width: 4),
-                        Text("Active Profile", style: EcoText.label.copyWith(color: EcoColors.tertiary, fontWeight: FontWeight.w600)),
+                        Text("EcoTrax", style: EcoText.h2.copyWith(fontSize: 18)),
+                        Row(
+                          children: [
+                            const Icon(Icons.circle, size: 6, color: EcoColors.secondary),
+                            const SizedBox(width: 4),
+                            Text("LIVE TELEMETRY", style: EcoText.label.copyWith(fontSize: 9)),
+                          ],
+                        )
                       ],
                     ),
                   ],
                 ),
                 GestureDetector(
                   onTap: () => showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (_) => const CarSwitcherSheet(),
-                  ),
+                      context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (_) => const CarSwitcherSheet()),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: EcoColors.bgHigh,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: EcoColors.glassBorder),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.swap_horiz, color: EcoColors.primary, size: 16),
+                        const Icon(Icons.directions_car, color: EcoColors.primary, size: 16),
                         const SizedBox(width: 6),
-                        Text("Change", style: EcoText.label.copyWith(color: EcoColors.onSurface)),
+                        Text("${car.name} · ${car.model}", style: EcoText.label.copyWith(color: EcoColors.onSurface, fontSize: 12)),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.unfold_more, size: 14, color: EcoColors.outline),
                       ],
                     ),
                   ),
@@ -88,166 +83,252 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // --- Action Buttons ---
-            GestureDetector(
-              onTap: () => _openRefill(context),
-              child: Container(
-                height: 56,
-                decoration: BoxDecoration(
-                  color: EcoColors.primaryContainer,
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(color: EcoColors.primaryContainer.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 8)),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.local_gas_station, color: EcoColors.onPrimary, size: 24),
-                    const SizedBox(width: 8),
-                    Text("Refill Now", style: EcoText.h2.copyWith(color: EcoColors.onPrimary)),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            GestureDetector(
-              onTap: () => showModalBottomSheet(
-                  context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (_) => const ForgotResetSheet()),
-              child: Container(
-                height: 44,
-                decoration: BoxDecoration(
-                  color: EcoColors.bgLow.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.history, color: EcoColors.secondary, size: 18),
-                    const SizedBox(width: 8),
-                    Text("I forgot to log last refill", style: EcoText.label.copyWith(color: EcoColors.onSurfaceVariant)),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // --- 2x2 Metric Grid ---
-            Row(
-              children: [
-                Expanded(child: _MetricCard(
-                  label: "Average",
-                  value: state.overallAverage == 0 ? "0.00" : state.overallAverage.toStringAsFixed(2),
-                  icon: Icons.auto_graph,
-                  iconColor: EcoColors.primary,
-                  trendText: "+0.8 vs last mo",
-                  trendColor: EcoColors.tertiary,
-                )),
-                const SizedBox(width: 12),
-                Expanded(child: _MetricCard(
-                  label: "Last Refill",
-                  value: state.lastEconomy == 0 ? "0.00" : state.lastEconomy.toStringAsFixed(2),
-                  icon: Icons.eco,
-                  iconColor: EcoColors.secondary,
-                  trendText: "Efficient",
-                  trendColor: EcoColors.secondary,
-                )),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // --- Insights ---
-            Text("VEHICLE DIAGNOSTICS & COST", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.onSurfaceVariant)),
-            const SizedBox(height: 12),
-
-            _InsightRow(
-              icon: Icons.currency_rupee,
-              iconColor: EcoColors.secondary,
-              iconBg: EcoColors.secondaryContainer.withOpacity(0.3),
-              title: "Cost per KM",
-              value: "₹ ${state.costPerKm.toStringAsFixed(2)} / km",
-              subtitle: "Total spent: ₹ ${state.totalFuelSpend.toStringAsFixed(0)}",
-            ),
-            const SizedBox(height: 8),
-            _InsightRow(
-              icon: Icons.local_gas_station,
-              iconColor: EcoColors.primary,
-              iconBg: EcoColors.primaryContainer.withOpacity(0.2),
-              title: "Best Fuel Station",
-              value: state.bestStation != null ? "${state.bestStation!.station.label} · ${state.bestStation!.avg.toStringAsFixed(1)} km/L" : "Not enough data",
-              subtitle: "Top Rank",
-              isBadge: true,
-            ),
-            const SizedBox(height: 8),
-            _InsightRow(
-              icon: Icons.opacity,
-              iconColor: EcoColors.tertiary,
-              iconBg: EcoColors.tertiaryContainer.withOpacity(0.2),
-              title: "Best Density",
-              value: state.bestDensity != null ? "${state.bestDensity!.density.toStringAsFixed(3)} kg/L" : "Not enough data",
-              subtitle: "Optimal combustion",
-            ),
-            const SizedBox(height: 24),
-
-            // --- Recent Refills ---
+            // --- Badge Strip ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("RECENT REFILLS", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.onSurfaceVariant)),
                 Row(
                   children: [
-                    const Icon(Icons.download, size: 14, color: EcoColors.primary),
-                    const SizedBox(width: 4),
-                    Text("Export CSV", style: EcoText.label.copyWith(color: EcoColors.primary)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6), border: Border.all(color: EcoColors.glassBorder)),
+                      child: Text("2024 Petrol", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.onSurface)),
+                    ),
+                    const SizedBox(width: 8),
+                    Text("•", style: EcoText.label.copyWith(color: EcoColors.outline)),
+                    const SizedBox(width: 8),
+                    Text("${state.lastTripMeter.toStringAsFixed(0)} KM", style: EcoText.label.copyWith(fontSize: 11, color: EcoColors.onSurface)),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            ...state.recentEntries.take(3).map((e) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: GestureDetector(
-                onTap: () => showModalBottomSheet(
-                    context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (_) => EntryDetailSheet(entryId: e.id)),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: EcoColors.bgLow.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(color: EcoColors.secondaryContainer, borderRadius: BorderRadius.circular(12)),
                   child: Row(
                     children: [
-                      Container(
-                        width: 40, height: 40,
-                        decoration: BoxDecoration(color: e.station.color.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                        alignment: Alignment.center,
-                        child: Text(e.station.label.substring(0, 2).toUpperCase(), style: EcoText.label.copyWith(color: e.station.color, fontWeight: FontWeight.bold)),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(e.station.label, style: EcoText.bodyStrong.copyWith(fontSize: 15)),
-                            Text("${DateFormat('dd MMM yyyy').format(e.date)} · ${e.litres} L", style: EcoText.label.copyWith(fontSize: 11, color: EcoColors.onSurfaceVariant)),
-                          ],
-                        ),
+                      const Icon(Icons.circle, size: 6, color: EcoColors.secondary),
+                      const SizedBox(width: 6),
+                      Text("OPTIMAL TUNE", style: EcoText.label.copyWith(fontSize: 9, color: EcoColors.secondary)),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // --- Hero Economy Card ---
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: EcoColors.glassBorder),
+                boxShadow: [BoxShadow(color: EcoColors.onSurface.withOpacity(0.04), blurRadius: 24, offset: const Offset(0, 8))],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text("LIFETIME EFFICIENCY", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.onSurfaceVariant)),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(color: EcoColors.primaryContainer, borderRadius: BorderRadius.circular(4)),
+                                child: Text("VALIDATED", style: EcoText.label.copyWith(fontSize: 8, color: EcoColors.primary)),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(state.overallAverage == 0 ? "0.00" : state.overallAverage.toStringAsFixed(2), style: EcoText.mediumNumber.copyWith(fontSize: 44, fontWeight: FontWeight.w800)),
+                              const SizedBox(width: 6),
+                              Text("km/L", style: EcoText.bodyStrong.copyWith(color: EcoColors.onSurfaceVariant)),
+                            ],
+                          )
+                        ],
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text("${e.economy.toStringAsFixed(2)}", style: EcoText.h2.copyWith(color: EcoColors.primary, fontSize: 18)),
-                          Text("km/L", style: EcoText.label.copyWith(fontSize: 10)),
+                          Text("LAST REFILL", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.onSurfaceVariant)),
+                          const SizedBox(height: 4),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(state.lastEconomy == 0 ? "0.00" : state.lastEconomy.toStringAsFixed(2), style: EcoText.mediumNumber.copyWith(fontSize: 24, color: EcoColors.secondary)),
+                              const SizedBox(width: 4),
+                              Text("km/L", style: EcoText.label.copyWith(fontSize: 10)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.trending_up, size: 14, color: EcoColors.secondary),
+                              const SizedBox(width: 2),
+                              Text("+9.1%", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.secondary)),
+                            ],
+                          )
                         ],
                       )
                     ],
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  Divider(color: EcoColors.glassBorder, height: 1),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(color: EcoColors.secondaryContainer, borderRadius: BorderRadius.circular(12)),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.north_east, size: 12, color: EcoColors.secondary),
+                            const SizedBox(width: 4),
+                            Text("+1.2 vs last month", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.secondary)),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Text("Range: ", style: EcoText.label.copyWith(fontSize: 11)),
+                          Text("598 km", style: EcoText.label.copyWith(fontSize: 12, color: EcoColors.onSurface, fontWeight: FontWeight.bold)),
+                        ],
+                      )
+                    ],
+                  )
+                ],
               ),
-            )),
+            ),
+            const SizedBox(height: 16),
 
-            const SizedBox(height: 100), // Padding for bottom nav
+            // --- Dual CTA Actions ---
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: GestureDetector(
+                    onTap: () => _openRefill(context),
+                    child: Container(
+                      height: 52,
+                      decoration: BoxDecoration(color: EcoColors.onSurface, borderRadius: BorderRadius.circular(14)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.local_gas_station, color: EcoColors.primaryContainer, size: 20),
+                          const SizedBox(width: 8),
+                          Text("Log Refill", style: EcoText.bodyStrong.copyWith(color: Colors.white, fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 1,
+                  child: GestureDetector(
+                    onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (_) => const ForgotResetSheet()),
+                    child: Container(
+                      height: 52,
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: EcoColors.glassBorder)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.history_toggle_off, color: EcoColors.outline, size: 18),
+                          const SizedBox(width: 6),
+                          Text("Forgot to log", style: EcoText.bodyStrong.copyWith(color: EcoColors.onSurface, fontSize: 13)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 28),
+
+            // --- Diagnostics Grid ---
+            Text("PRECISION DIAGNOSTICS", style: EcoText.label.copyWith(fontSize: 10)),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _DiagCard(title: "COST / KM", value: "₹${state.costPerKm.toStringAsFixed(2)}", sub: "₹4,200 this cycle", icon: Icons.currency_rupee, iconColor: EcoColors.onSurface, iconBg: EcoColors.bgLow, trend: "-₹0.32", isMint: true)),
+                const SizedBox(width: 12),
+                Expanded(child: _DiagCard(
+                    title: "TOP STATION",
+                    value: state.bestStation?.station.label ?? "N/A",
+                    sub: "${state.bestStation?.avg.toStringAsFixed(1) ?? '0'} km/L avg",
+                    icon: Icons.verified, iconColor: EcoColors.primary, iconBg: EcoColors.primaryContainer,
+                    isTextValue: true
+                )),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _DiagCard(title: "DENSITY", value: state.bestDensity?.density.toStringAsFixed(3) ?? "0.745", sub: "kg/L (Euro VI)", icon: Icons.science, iconColor: EcoColors.secondary, iconBg: EcoColors.secondaryContainer)),
+                const SizedBox(width: 12),
+                Expanded(child: _DiagCard(title: "TANK RANGE", value: "598", sub: "approx 32.5 L left", icon: Icons.navigation, iconColor: EcoColors.onSurface, iconBg: EcoColors.bgLow, suffix: "km")),
+              ],
+            ),
+            const SizedBox(height: 28),
+
+            // --- Editorial List ---
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("REFILL LOG", style: EcoText.label.copyWith(fontSize: 10)),
+                Row(
+                  children: [
+                    const Icon(Icons.file_download, size: 14, color: EcoColors.primary),
+                    const SizedBox(width: 4),
+                    Text("Export CSV", style: EcoText.label.copyWith(color: EcoColors.primary, fontSize: 11)),
+                  ],
+                )
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: EcoColors.glassBorder)),
+              child: Column(
+                children: state.recentEntries.take(3).map((e) => Column(
+                  children: [
+                    ListTile(
+                      onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (_) => EntryDetailSheet(entryId: e.id)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      leading: Container(
+                        width: 40, height: 40,
+                        decoration: BoxDecoration(color: e.station.color.withOpacity(0.1), borderRadius: BorderRadius.circular(10), border: Border.all(color: e.station.color.withOpacity(0.2))),
+                        alignment: Alignment.center,
+                        child: Text(e.station.label.substring(0, 2).toUpperCase(), style: EcoText.label.copyWith(color: e.station.color, fontSize: 10)),
+                      ),
+                      title: Text(e.station.label, style: EcoText.bodyStrong.copyWith(fontSize: 14)),
+                      subtitle: Text("${DateFormat('dd MMM').format(e.date)} · ${e.litres} L · ₹${e.pricePerLitre}/L", style: EcoText.label.copyWith(fontSize: 11, color: EcoColors.onSurfaceVariant)),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text("${e.economy.toStringAsFixed(2)}", style: EcoText.mediumNumber.copyWith(fontSize: 16, color: EcoColors.onSurface)),
+                          Text("km/L", style: EcoText.label.copyWith(fontSize: 9)),
+                        ],
+                      ),
+                    ),
+                    if (e != state.recentEntries.take(3).last) Divider(height: 1, color: EcoColors.glassBorder),
+                  ],
+                )).toList(),
+              ),
+            ),
+            const SizedBox(height: 100),
           ],
         ),
       ),
@@ -255,115 +336,76 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _openRefill(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const RefillSheet(),
-    );
+    showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (_) => const RefillSheet());
   }
 }
 
 // --- Helper Widgets ---
 
-class _MetricCard extends StatelessWidget {
-  final String label, value, trendText;
+class _DiagCard extends StatelessWidget {
+  final String title, value, sub;
   final IconData icon;
-  final Color iconColor, trendColor;
+  final Color iconColor, iconBg;
+  final String? trend, suffix;
+  final bool isMint, isTextValue;
 
-  const _MetricCard({
-    required this.label, required this.value, required this.icon,
-    required this.iconColor, required this.trendText, required this.trendColor
+  const _DiagCard({
+    required this.title, required this.value, required this.sub,
+    required this.icon, required this.iconColor, required this.iconBg,
+    this.trend, this.suffix, this.isMint = false, this.isTextValue = false
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: EcoColors.bgLow.withOpacity(0.8), borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: EcoColors.glassBorder)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(label.toUpperCase(), style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.onSurfaceVariant)),
-              Icon(icon, size: 18, color: iconColor),
+              Text(title, style: EcoText.label.copyWith(fontSize: 9, color: EcoColors.onSurfaceVariant)),
+              Container(
+                width: 24, height: 24,
+                decoration: BoxDecoration(color: iconBg, borderRadius: BorderRadius.circular(6)),
+                child: Icon(icon, size: 14, color: iconColor),
+              )
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(value, style: EcoText.mediumNumber.copyWith(color: iconColor)),
-              const SizedBox(width: 4),
-              Text("km/L", style: EcoText.label.copyWith(fontSize: 10)),
+              Flexible(
+                child: Text(
+                  value,
+                  style: isTextValue
+                      ? EcoText.bodyStrong.copyWith(fontSize: 16)
+                      : EcoText.mediumNumber.copyWith(fontSize: 20),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (suffix != null) ...[
+                const SizedBox(width: 4),
+                Text(suffix!, style: EcoText.label.copyWith(fontSize: 10)),
+              ]
             ],
           ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-            decoration: BoxDecoration(color: trendColor.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: 4),
+          Text(sub, style: EcoText.label.copyWith(fontSize: 10, color: isMint ? EcoColors.secondary : EcoColors.outline)),
+          if (trend != null) ...[
+            const SizedBox(height: 6),
+            Row(
               children: [
-                Icon(Icons.arrow_upward, size: 12, color: trendColor),
+                const Icon(Icons.arrow_downward, size: 12, color: EcoColors.secondary),
                 const SizedBox(width: 4),
-                Text(trendText, style: EcoText.label.copyWith(fontSize: 10, color: trendColor)),
+                Text(trend!, style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.secondary)),
               ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _InsightRow extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor, iconBg;
-  final String title, value, subtitle;
-  final bool isBadge;
-
-  const _InsightRow({
-    required this.icon, required this.iconColor, required this.iconBg,
-    required this.title, required this.value, required this.subtitle, this.isBadge = false
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: EcoColors.bgContainer.withOpacity(0.7), borderRadius: BorderRadius.circular(16)),
-      child: Row(
-        children: [
-          Container(
-            width: 44, height: 44,
-            decoration: BoxDecoration(color: iconBg, borderRadius: BorderRadius.circular(12)),
-            child: Icon(icon, color: iconColor, size: 24),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title.toUpperCase(), style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.onSurfaceVariant)),
-                const SizedBox(height: 2),
-                Text(value, style: EcoText.bodyStrong.copyWith(fontSize: 15)),
-                const SizedBox(height: 2),
-                Text(subtitle, style: EcoText.label.copyWith(fontSize: 11, color: isBadge ? EcoColors.primary : EcoColors.outline)),
-              ],
-            ),
-          ),
-          if (isBadge)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(color: EcoColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-              child: Text("Top Rank", style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.primary)),
             )
-          else
-            const Icon(Icons.chevron_right, color: EcoColors.outline, size: 20),
+          ]
         ],
       ),
     );

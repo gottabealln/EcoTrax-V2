@@ -11,7 +11,7 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.dark, // Dark icons for light background
     ),
   );
   runApp(
@@ -31,13 +31,13 @@ class EcotraxApp extends StatelessWidget {
       title: 'EcoTrax',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: EcoColors.bg1,
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: EcoColors.bgLowest,
         useMaterial3: true,
-        colorScheme: const ColorScheme.dark(
-          primary: EcoColors.accentCool1,
-          secondary: EcoColors.accentWarm1,
-          surface: EcoColors.bg2,
+        colorScheme: const ColorScheme.light(
+          primary: EcoColors.primary,
+          secondary: EcoColors.secondary,
+          surface: EcoColors.bgLowest,
         ),
         textTheme: const TextTheme(
           displayLarge: TextStyle(decoration: TextDecoration.none),

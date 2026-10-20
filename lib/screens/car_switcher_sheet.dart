@@ -20,13 +20,13 @@ class CarSwitcherSheet extends StatelessWidget {
           maxHeight: MediaQuery.of(context).size.height * 0.8,
         ),
         decoration: const BoxDecoration(
-          color: EcoColors.bg2,
+          color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
           border: Border(
             top: BorderSide(color: EcoColors.glassBorder, width: 1),
           ),
         ),
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+        padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -37,28 +37,22 @@ class CarSwitcherSheet extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: EcoColors.outline.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              ShaderMask(
-                shaderCallback: (b) => const LinearGradient(
-                  colors: EcoColors.coolGradient,
-                ).createShader(b),
-                child: Text('Your Cars',
-                    style: EcoText.h1.copyWith(fontSize: 22)),
-              ),
+              const SizedBox(height: 24),
+              Text('Your Cars', style: EcoText.h1.copyWith(fontSize: 24)),
               const SizedBox(height: 6),
               Text('Tap to switch · long-press to edit',
                   style: EcoText.body.copyWith(fontSize: 13)),
-              const SizedBox(height: 18),
+              const SizedBox(height: 24),
 
               ...state.cars.map((car) {
                 final isActive = car.id == state.activeCarId;
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 12),
                   child: GestureDetector(
                     onTap: () async {
                       await state.setActiveCar(car.id);
@@ -70,13 +64,13 @@ class CarSwitcherSheet extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: isActive
-                            ? EcoColors.accentCool1.withOpacity(0.15)
-                            : Colors.white.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(18),
+                            ? EcoColors.primaryContainer
+                            : EcoColors.bgLow,
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isActive
-                              ? EcoColors.accentCool1
-                              : Colors.white.withOpacity(0.1),
+                              ? EcoColors.primary
+                              : Colors.transparent,
                           width: isActive ? 1.5 : 1,
                         ),
                       ),
@@ -86,23 +80,18 @@ class CarSwitcherSheet extends StatelessWidget {
                             width: 44,
                             height: 44,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              gradient: isActive
-                                  ? const LinearGradient(
-                                  colors: EcoColors.coolGradient)
-                                  : null,
-                              color: isActive
-                                  ? null
-                                  : Colors.white.withOpacity(0.06),
+                              color: isActive ? EcoColors.primary : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(
                               Icons.directions_car_rounded,
-                              color:
-                              isActive ? Colors.white : Colors.white60,
+                              color: isActive
+                                  ? Colors.white
+                                  : EcoColors.onSurfaceVariant,
                               size: 22,
                             ),
                           ),
-                          const SizedBox(width: 14),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +109,7 @@ class CarSwitcherSheet extends StatelessWidget {
                           ),
                           if (isActive)
                             const Icon(Icons.check_circle_rounded,
-                                color: EcoColors.accentCool1, size: 22),
+                                color: EcoColors.primary, size: 24),
                         ],
                       ),
                     ),
@@ -128,7 +117,7 @@ class CarSwitcherSheet extends StatelessWidget {
                 );
               }),
 
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
 
               GestureDetector(
                 onTap: () {
@@ -144,21 +133,19 @@ class CarSwitcherSheet extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.15),
-                    ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: EcoColors.glassBorder),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(Icons.add_rounded,
-                          color: Colors.white70, size: 20),
+                          color: EcoColors.primary, size: 20),
                       const SizedBox(width: 8),
                       Text('Add New Car',
                           style: EcoText.bodyStrong
-                              .copyWith(color: Colors.white70)),
+                              .copyWith(color: EcoColors.primary)),
                     ],
                   ),
                 ),
@@ -175,7 +162,7 @@ class CarSwitcherSheet extends StatelessWidget {
   void _showOptions(BuildContext context, AppState state, Car car) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: EcoColors.bg2,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -185,7 +172,7 @@ class CarSwitcherSheet extends StatelessWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.edit_rounded,
-                  color: EcoColors.accentCool1),
+                  color: EcoColors.primary),
               title: Text('Edit "${car.name}"', style: EcoText.bodyStrong),
               onTap: () {
                 Navigator.pop(ctx);
@@ -194,10 +181,10 @@ class CarSwitcherSheet extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.delete_outline_rounded,
-                  color: Color(0xFFF5576C)),
+                  color: Color(0xFFDC2626)),
               title: Text('Delete "${car.name}"',
                   style: EcoText.bodyStrong
-                      .copyWith(color: const Color(0xFFF5576C))),
+                      .copyWith(color: const Color(0xFFDC2626))),
               onTap: () {
                 Navigator.pop(ctx);
                 _confirmDelete(context, state, car);
@@ -221,7 +208,7 @@ class CarSwitcherSheet extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: EcoColors.bg2,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
@@ -238,34 +225,29 @@ class CarSwitcherSheet extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ShaderMask(
-                  shaderCallback: (b) => const LinearGradient(
-                    colors: EcoColors.coolGradient,
-                  ).createShader(b),
-                  child: Text('Edit Car',
-                      style: EcoText.h1.copyWith(fontSize: 20)),
-                ),
+                Text('Edit Car',
+                    style: EcoText.h1.copyWith(fontSize: 22)),
                 const SizedBox(height: 20),
 
-                Text('CAR NAME', style: EcoText.label),
+                Text('CAR NAME', style: EcoText.label.copyWith(fontSize: 10)),
                 const SizedBox(height: 8),
                 TextField(
                   controller: nameCtrl,
-                  style: EcoText.bodyStrong.copyWith(fontSize: 15),
+                  style: EcoText.bodyStrong.copyWith(fontSize: 15, color: EcoColors.onSurface),
                   decoration: _deco('Car name'),
                 ),
                 const SizedBox(height: 14),
 
-                Text('MODEL', style: EcoText.label),
+                Text('MODEL', style: EcoText.label.copyWith(fontSize: 10)),
                 const SizedBox(height: 8),
                 TextField(
                   controller: modelCtrl,
-                  style: EcoText.bodyStrong.copyWith(fontSize: 15),
+                  style: EcoText.bodyStrong.copyWith(fontSize: 15, color: EcoColors.onSurface),
                   decoration: _deco('Model'),
                 ),
                 const SizedBox(height: 14),
 
-                Text('FUEL TYPE', style: EcoText.label),
+                Text('FUEL TYPE', style: EcoText.label.copyWith(fontSize: 10)),
                 const SizedBox(height: 10),
                 Wrap(
                   spacing: 8,
@@ -278,14 +260,10 @@ class CarSwitcherSheet extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 10),
                         decoration: BoxDecoration(
-                          color: sel
-                              ? EcoColors.accentCool1.withOpacity(0.2)
-                              : Colors.white.withOpacity(0.05),
+                          color: sel ? EcoColors.primaryContainer : EcoColors.bgLow,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: sel
-                                ? EcoColors.accentCool1
-                                : Colors.white.withOpacity(0.12),
+                            color: sel ? EcoColors.primary : Colors.transparent,
                             width: sel ? 1.5 : 1,
                           ),
                         ),
@@ -293,7 +271,7 @@ class CarSwitcherSheet extends StatelessWidget {
                           f.label,
                           style: EcoText.bodyStrong.copyWith(
                             fontSize: 12,
-                            color: sel ? Colors.white : Colors.white70,
+                            color: sel ? EcoColors.primary : EcoColors.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -302,13 +280,13 @@ class CarSwitcherSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
 
-                Text('TANK SIZE (L)', style: EcoText.label),
+                Text('TANK SIZE (L)', style: EcoText.label.copyWith(fontSize: 10)),
                 const SizedBox(height: 8),
                 TextField(
                   controller: tankCtrl,
                   keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-                  style: EcoText.bodyStrong.copyWith(fontSize: 15),
+                  style: EcoText.bodyStrong.copyWith(fontSize: 15, color: EcoColors.onSurface),
                   decoration: _deco('Tank size (optional)'),
                 ),
                 const SizedBox(height: 24),
@@ -321,15 +299,13 @@ class CarSwitcherSheet extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.06),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                                color: Colors.white.withOpacity(0.12)),
+                            color: EcoColors.bgLow,
+                            borderRadius: BorderRadius.circular(14),
                           ),
                           child: Center(
                             child: Text('Cancel',
                                 style: EcoText.bodyStrong
-                                    .copyWith(color: Colors.white70)),
+                                    .copyWith(color: EcoColors.onSurfaceVariant)),
                           ),
                         ),
                       ),
@@ -359,14 +335,13 @@ class CarSwitcherSheet extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                                colors: EcoColors.coolGradient),
-                            borderRadius: BorderRadius.circular(16),
+                            color: EcoColors.primary,
+                            borderRadius: BorderRadius.circular(14),
                           ),
                           child: Center(
                             child: Text('Save',
                                 style: EcoText.bodyStrong.copyWith(
-                                    fontSize: 15, letterSpacing: 0.4)),
+                                    color: Colors.white, fontSize: 15)),
                           ),
                         ),
                       ),
@@ -387,9 +362,9 @@ class CarSwitcherSheet extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: EcoColors.bg2,
+        backgroundColor: Colors.white,
         title: Text('Delete "${car.name}"?',
-            style: EcoText.bodyStrong.copyWith(fontSize: 18)),
+            style: EcoText.h2.copyWith(fontSize: 18)),
         content: Text(
           'This will remove all refills and service records for this car. This cannot be undone.',
           style: EcoText.body.copyWith(fontSize: 13),
@@ -398,7 +373,7 @@ class CarSwitcherSheet extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Cancel',
-                style: TextStyle(color: Colors.white70)),
+                style: TextStyle(color: EcoColors.onSurfaceVariant)),
           ),
           TextButton(
             onPressed: () {
@@ -406,7 +381,7 @@ class CarSwitcherSheet extends StatelessWidget {
               Navigator.pop(ctx);
             },
             child: const Text('Delete',
-                style: TextStyle(color: Color(0xFFF5576C))),
+                style: TextStyle(color: Color(0xFFDC2626))),
           ),
         ],
       ),
@@ -418,19 +393,19 @@ class CarSwitcherSheet extends StatelessWidget {
   InputDecoration _deco(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: EcoText.body.copyWith(color: Colors.white30),
+      hintStyle: EcoText.body.copyWith(color: EcoColors.outline.withOpacity(0.5)),
       filled: true,
-      fillColor: Colors.white.withOpacity(0.05),
+      fillColor: EcoColors.bgLow,
       contentPadding:
-      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.12)),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         borderSide:
-        const BorderSide(color: EcoColors.accentCool1, width: 1.5),
+        const BorderSide(color: EcoColors.primary, width: 1.5),
       ),
     );
   }

@@ -19,7 +19,7 @@ class _MainScaffoldState extends State<MainScaffold> {
     return Scaffold(
       body: IndexedStack(
         index: _index,
-        children: [
+        children: const [
           HomeScreen(),
           GraphsScreen(),
           ServiceScreen(),

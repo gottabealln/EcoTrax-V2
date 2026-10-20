@@ -7,8 +7,6 @@ import 'package:path_provider/path_provider.dart';
 import '../state/app_state.dart';
 import '../theme/colors.dart';
 import '../theme/text_styles.dart';
-import '../widgets/animated_gradient_bg.dart';
-import '../widgets/glass_card.dart';
 import '../models/service_record.dart';
 import 'car_setup_screen.dart';
 
@@ -29,8 +27,9 @@ class ServiceScreen extends StatelessWidget {
     final services = [...state.activeServices]
       ..sort((a, b) => b.date.compareTo(a.date));
 
-    return AnimatedGradientBg(
-      child: SafeArea(
+    return Scaffold(
+      backgroundColor: EcoColors.bgLowest,
+      body: SafeArea(
         bottom: false,
         child: Stack(
           children: [
@@ -38,53 +37,47 @@ class ServiceScreen extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: EdgeInsets.fromLTRB(hp, 16, hp, 100),
               children: [
-                ShaderMask(
-                  shaderCallback: (b) => const LinearGradient(
-                    colors: EcoColors.coolGradient,
-                  ).createShader(b),
-                  child: Text('Service Log', style: EcoText.logo),
-                ),
+                // Header
+                Text("Service & Maintenance", style: EcoText.h1.copyWith(fontSize: 26)),
                 const SizedBox(height: 4),
-                Text('${car.name} · ${car.model}',
-                    style: EcoText.body.copyWith(fontSize: 13)),
+                Text("${car.name} · ${car.model}", style: EcoText.body.copyWith(fontSize: 13)),
                 const SizedBox(height: 24),
 
-                // ---- Total spent card ----
-                GlassCard(
+                // Total spent card
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: EcoColors.glassBorder),
+                    boxShadow: [BoxShadow(color: EcoColors.onSurface.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 8))],
+                  ),
                   child: Row(
                     children: [
                       Container(
                         width: 48,
                         height: 48,
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFFFB347),
-                              Color(0xFFFF7B54),
-                            ],
-                          ),
+                          color: EcoColors.secondaryContainer,
+                          borderRadius: BorderRadius.circular(14),
                         ),
-                        child: const Icon(Icons.build_rounded,
-                            color: Colors.white, size: 24),
+                        child: const Icon(Icons.build_rounded, color: EcoColors.secondary, size: 24),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('TOTAL SERVICE SPEND',
-                                style: EcoText.label),
+                            Text('TOTAL MAINTENANCE SPEND', style: EcoText.label.copyWith(fontSize: 10)),
                             const SizedBox(height: 6),
                             Text(
                               '₹ ${state.totalServiceSpend.toStringAsFixed(0)}',
-                              style: EcoText.bodyStrong.copyWith(
-                                  fontSize: 18),
+                              style: EcoText.mediumNumber.copyWith(fontSize: 24),
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '${services.length} record${services.length == 1 ? '' : 's'}',
-                              style: EcoText.body.copyWith(fontSize: 12),
+                              '${services.length} record${services.length == 1 ? '' : 's'} logged',
+                              style: EcoText.body.copyWith(fontSize: 11, color: EcoColors.outline),
                             ),
                           ],
                         ),
@@ -92,21 +85,24 @@ class ServiceScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 28),
 
-                Text('RECORDS', style: EcoText.label),
+                Text('LOGGED RECORDS', style: EcoText.label.copyWith(fontSize: 10)),
                 const SizedBox(height: 12),
 
                 if (services.isEmpty)
-                  GlassCard(
+                  Container(
+                    padding: const EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: EcoColors.glassBorder),
+                    ),
                     child: Column(
                       children: [
-                        const Icon(Icons.build_outlined,
-                            color: Colors.white24, size: 40),
-                        const SizedBox(height: 10),
-                        Text('No service records yet',
-                            style: EcoText.bodyStrong
-                                .copyWith(color: Colors.white70)),
+                        const Icon(Icons.build_outlined, color: EcoColors.outline, size: 40),
+                        const SizedBox(height: 12),
+                        Text('No service records yet', style: EcoText.bodyStrong),
                         const SizedBox(height: 4),
                         Text(
                           'Tap the + button to log your first service',
@@ -118,15 +114,15 @@ class ServiceScreen extends StatelessWidget {
                   )
                 else
                   ...services.map((s) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 12),
                     child: _ServiceTile(record: s),
                   )),
               ],
             ),
 
-            // ---- Floating action button ----
+            // Floating Action Button
             Positioned(
-              bottom: 24,
+              bottom: 100,
               right: hp,
               child: GestureDetector(
                 onTap: () => _openAddService(context),
@@ -134,22 +130,17 @@ class ServiceScreen extends StatelessWidget {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: EcoColors.coolGradient,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: EcoColors.onSurface,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: EcoColors.accentCool1.withOpacity(0.45),
+                        color: EcoColors.onSurface.withOpacity(0.2),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.add_rounded,
-                      color: Colors.white, size: 30),
+                  child: const Icon(Icons.add_rounded, color: Colors.white, size: 30),
                 ),
               ),
             ),
@@ -179,46 +170,42 @@ class _ServiceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _openDetail(context),
-      child: GlassCard(
+      child: Container(
         padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: EcoColors.glassBorder),
+        ),
         child: Row(
           children: [
             Container(
-              width: 46,
-              height: 46,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFFFB347),
-                    Color(0xFFFF7B54),
-                  ],
-                ),
+                color: EcoColors.bgLow,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.build_rounded,
-                  color: Colors.white, size: 22),
+              child: const Icon(Icons.build_rounded, color: EcoColors.primary, size: 20),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(record.serviceType,
-                      style: EcoText.bodyStrong.copyWith(fontSize: 15)),
-                  const SizedBox(height: 3),
+                  Text(record.serviceType, style: EcoText.bodyStrong.copyWith(fontSize: 15)),
+                  const SizedBox(height: 4),
                   Text(
                     '${record.odometerKm.toStringAsFixed(0)} km · ${DateFormat('MMM d, yyyy').format(record.date)}',
-                    style: EcoText.body.copyWith(fontSize: 11),
+                    style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.outline),
                   ),
                   if (record.billPhotoPath != null) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
-                        Icon(Icons.image_rounded,
-                            size: 12, color: Colors.white.withOpacity(0.5)),
+                        const Icon(Icons.image_rounded, size: 12, color: EcoColors.secondary),
                         const SizedBox(width: 4),
-                        Text('Bill attached',
-                            style: EcoText.body.copyWith(fontSize: 10)),
+                        Text('Bill attached', style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.secondary)),
                       ],
                     ),
                   ],
@@ -228,9 +215,7 @@ class _ServiceTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('₹ ${record.cost.toStringAsFixed(0)}',
-                    style: EcoText.bodyStrong.copyWith(
-                        fontSize: 14, color: EcoColors.accentCool1)),
+                Text('₹ ${record.cost.toStringAsFixed(0)}', style: EcoText.mediumNumber.copyWith(fontSize: 16)),
               ],
             ),
           ],
@@ -262,11 +247,9 @@ class _ServiceDetailSheet extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
-        ),
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
         decoration: const BoxDecoration(
-          color: EcoColors.bg2,
+          color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
         ),
         padding: const EdgeInsets.all(24),
@@ -277,28 +260,15 @@ class _ServiceDetailSheet extends StatelessWidget {
             children: [
               Center(
                 child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+                  width: 40, height: 4,
+                  decoration: BoxDecoration(color: EcoColors.outline.withOpacity(0.3), borderRadius: BorderRadius.circular(2)),
                 ),
               ),
-              const SizedBox(height: 20),
-              ShaderMask(
-                shaderCallback: (b) => const LinearGradient(
-                  colors: EcoColors.coolGradient,
-                ).createShader(b),
-                child: Text(record.serviceType,
-                    style: EcoText.h1.copyWith(fontSize: 22)),
-              ),
+              const SizedBox(height: 24),
+              Text(record.serviceType, style: EcoText.h1.copyWith(fontSize: 24)),
               const SizedBox(height: 6),
-              Text(
-                DateFormat('EEEE, MMM d, yyyy').format(record.date),
-                style: EcoText.body.copyWith(fontSize: 12),
-              ),
-              const SizedBox(height: 20),
+              Text(DateFormat('EEEE, MMM d, yyyy').format(record.date), style: EcoText.body.copyWith(fontSize: 13)),
+              const SizedBox(height: 24),
 
               _detailRow('Odometer', '${record.odometerKm.toStringAsFixed(0)} km'),
               _detailRow('Cost', '₹ ${record.cost.toStringAsFixed(2)}'),
@@ -306,7 +276,7 @@ class _ServiceDetailSheet extends StatelessWidget {
 
               if (record.billPhotoPath != null) ...[
                 const SizedBox(height: 16),
-                Text('BILL PHOTO', style: EcoText.label),
+                Text('BILL PHOTO', style: EcoText.label.copyWith(fontSize: 10)),
                 const SizedBox(height: 10),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
@@ -315,40 +285,31 @@ class _ServiceDetailSheet extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Container(
                       height: 200,
-                      color: Colors.white.withOpacity(0.05),
-                      child: Center(
-                        child: Text('Photo not found',
-                            style: EcoText.body.copyWith(fontSize: 12)),
-                      ),
+                      color: EcoColors.bgLow,
+                      child: Center(child: Text('Photo not found', style: EcoText.body)),
                     ),
                   ),
                 ),
               ],
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               GestureDetector(
                 onTap: () {
                   state.deleteService(record.id);
                   Navigator.pop(context);
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF5576C).withOpacity(0.12),
+                    color: const Color(0xFFFEE2E2), // Light red
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                        color: const Color(0xFFF5576C).withOpacity(0.4)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.delete_outline_rounded,
-                          color: Color(0xFFF5576C), size: 18),
+                      const Icon(Icons.delete_outline_rounded, color: Color(0xFFDC2626), size: 20),
                       const SizedBox(width: 8),
-                      Text('Delete Record',
-                          style: EcoText.bodyStrong.copyWith(
-                              fontSize: 14,
-                              color: const Color(0xFFF5576C))),
+                      Text('Delete Record', style: EcoText.bodyStrong.copyWith(fontSize: 15, color: const Color(0xFFDC2626))),
                     ],
                   ),
                 ),
@@ -366,14 +327,10 @@ class _ServiceDetailSheet extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(flex: 2, child: Text(label, style: EcoText.label)),
+          Expanded(flex: 2, child: Text(label, style: EcoText.label.copyWith(fontSize: 11))),
           Expanded(
             flex: 3,
-            child: Text(
-              value,
-              style: EcoText.bodyStrong.copyWith(fontSize: 14),
-              textAlign: TextAlign.right,
-            ),
+            child: Text(value, style: EcoText.bodyStrong.copyWith(fontSize: 14), textAlign: TextAlign.right),
           ),
         ],
       ),
@@ -412,14 +369,9 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
   Future<void> _pickImage(ImageSource source) async {
     try {
       final picker = ImagePicker();
-      final picked = await picker.pickImage(
-        source: source,
-        imageQuality: 75,
-        maxWidth: 1600,
-      );
+      final picked = await picker.pickImage(source: source, imageQuality: 75, maxWidth: 1600);
       if (picked == null) return;
 
-      // Copy to app documents so it persists
       final dir = await getApplicationDocumentsDirectory();
       final fileName = 'bill_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final savedFile = File('${dir.path}/$fileName');
@@ -428,9 +380,7 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
       setState(() => _billPhotoPath = savedFile.path);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not pick image: $e')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not pick image: $e')));
       }
     }
   }
@@ -443,9 +393,10 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
       lastDate: DateTime.now(),
       builder: (ctx, child) => Theme(
         data: Theme.of(ctx).copyWith(
-          colorScheme: const ColorScheme.dark(
-            primary: EcoColors.accentCool1,
-            surface: EcoColors.bg2,
+          colorScheme: const ColorScheme.light(
+            primary: EcoColors.primary,
+            onPrimary: Colors.white,
+            surface: Colors.white,
           ),
         ),
         child: child!,
@@ -457,9 +408,7 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
   Future<void> _save(AppState state) async {
     final type = _typeCtrl.text.trim();
     if (type.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a service type')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a service type')));
       return;
     }
 
@@ -488,22 +437,12 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
     return Material(
       color: Colors.transparent,
       child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.92,
-        ),
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.92),
         decoration: const BoxDecoration(
-          color: EcoColors.bg2,
+          color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-          border: Border(
-            top: BorderSide(color: EcoColors.glassBorder, width: 1),
-          ),
         ),
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
-          top: 12,
-          bottom: bottom + 24,
-        ),
+        padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: bottom + 24),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,104 +450,70 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
             children: [
               Center(
                 child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+                  width: 40, height: 4,
+                  decoration: BoxDecoration(color: EcoColors.outline.withOpacity(0.3), borderRadius: BorderRadius.circular(2)),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-              ShaderMask(
-                shaderCallback: (b) => const LinearGradient(
-                  colors: EcoColors.coolGradient,
-                ).createShader(b),
-                child: Text('New Service Record',
-                    style: EcoText.h1.copyWith(fontSize: 22)),
-              ),
-              const SizedBox(height: 8),
-              Text('Log what was done, when, and how much.',
-                  style: EcoText.body.copyWith(fontSize: 13)),
-              const SizedBox(height: 22),
+              Text('New Service Record', style: EcoText.h1.copyWith(fontSize: 22)),
+              const SizedBox(height: 6),
+              Text('Log what was done, when, and how much.', style: EcoText.body.copyWith(fontSize: 13)),
+              const SizedBox(height: 24),
 
-              _input('SERVICE TYPE', _typeCtrl,
-                  hint: 'e.g. Oil Change, Tyre Rotation'),
-              const SizedBox(height: 14),
+              _input('SERVICE TYPE', _typeCtrl, hint: 'e.g. Oil Change, Tyre Rotation'),
+              const SizedBox(height: 16),
 
               Row(
                 children: [
-                  Expanded(
-                    child: _input('ODOMETER (KM)', _odoCtrl, hint: 'e.g. 42000'),
-                  ),
+                  Expanded(child: _input('ODOMETER (KM)', _odoCtrl, hint: 'e.g. 42000')),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: _input('COST (₹)', _costCtrl, hint: 'e.g. 3200'),
-                  ),
+                  Expanded(child: _input('COST (₹)', _costCtrl, hint: 'e.g. 3200')),
                 ],
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 16),
 
-              Text('DATE', style: EcoText.label),
+              Text('DATE', style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.outline)),
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: _pickDate,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                        color: Colors.white.withOpacity(0.12)),
+                    color: EcoColors.bgLow,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today_rounded,
-                          color: Colors.white70, size: 18),
-                      const SizedBox(width: 10),
-                      Text(
-                        DateFormat('EEEE, MMM d, yyyy').format(_date),
-                        style: EcoText.bodyStrong.copyWith(fontSize: 14),
-                      ),
+                      const Icon(Icons.calendar_today_rounded, color: EcoColors.onSurfaceVariant, size: 18),
+                      const SizedBox(width: 12),
+                      Text(DateFormat('EEEE, MMM d, yyyy').format(_date), style: EcoText.bodyStrong.copyWith(fontSize: 14)),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 16),
 
-              _input('NOTES (OPTIONAL)', _notesCtrl,
-                  hint: 'Anything to remember', maxLines: 2),
-              const SizedBox(height: 14),
+              _input('NOTES (OPTIONAL)', _notesCtrl, hint: 'Anything to remember', maxLines: 2),
+              const SizedBox(height: 24),
 
-              Text('BILL PHOTO', style: EcoText.label),
+              Text('BILL PHOTO', style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.outline)),
               const SizedBox(height: 8),
               if (_billPhotoPath != null)
                 Stack(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: Image.file(
-                        File(_billPhotoPath!),
-                        height: 160,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.file(File(_billPhotoPath!), height: 160, width: double.infinity, fit: BoxFit.cover),
                     ),
                     Positioned(
-                      top: 8,
-                      right: 8,
+                      top: 8, right: 8,
                       child: GestureDetector(
                         onTap: () => setState(() => _billPhotoPath = null),
                         child: Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black.withOpacity(0.6),
-                          ),
-                          child: const Icon(Icons.close,
-                              color: Colors.white, size: 16),
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(0.6)),
+                          child: const Icon(Icons.close, color: Colors.white, size: 16),
                         ),
                       ),
                     ),
@@ -624,7 +529,7 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
                         onTap: () => _pickImage(ImageSource.camera),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: _photoButton(
                         icon: Icons.photo_library_rounded,
@@ -634,7 +539,7 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
                     ),
                   ],
                 ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
 
               Row(
                 children: [
@@ -644,15 +549,11 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.06),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                              color: Colors.white.withOpacity(0.12)),
+                          color: EcoColors.bgLow,
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         child: Center(
-                          child: Text('Cancel',
-                              style: EcoText.bodyStrong
-                                  .copyWith(color: Colors.white70)),
+                          child: Text('Cancel', style: EcoText.bodyStrong.copyWith(color: EcoColors.onSurfaceVariant)),
                         ),
                       ),
                     ),
@@ -665,32 +566,13 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                              colors: EcoColors.coolGradient),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: EcoColors.accentCool1
-                                  .withOpacity(0.4),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
+                          color: EcoColors.primary,
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         child: Center(
                           child: _saving
-                              ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                              : Text('Save Record',
-                              style: EcoText.bodyStrong.copyWith(
-                                  fontSize: 15,
-                                  letterSpacing: 0.4)),
+                              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                              : Text('Save Record', style: EcoText.bodyStrong.copyWith(fontSize: 15, color: Colors.white)),
                         ),
                       ),
                     ),
@@ -704,64 +586,53 @@ class _AddServiceSheetState extends State<AddServiceSheet> {
     );
   }
 
-  Widget _photoButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _photoButton({required IconData icon, required String label, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.06),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withOpacity(0.12)),
+          color: EcoColors.bgLow,
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white70, size: 18),
+            Icon(icon, color: EcoColors.onSurfaceVariant, size: 18),
             const SizedBox(width: 8),
-            Text(label,
-                style: EcoText.bodyStrong.copyWith(
-                    fontSize: 13, color: Colors.white70)),
+            Text(label, style: EcoText.bodyStrong.copyWith(fontSize: 13, color: EcoColors.onSurfaceVariant)),
           ],
         ),
       ),
     );
   }
 
-  Widget _input(
-      String label,
-      TextEditingController controller, {
-        String? hint,
-        int maxLines = 1,
-      }) {
+  Widget _input(String label, TextEditingController controller, {String? hint, int maxLines = 1}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: EcoText.label),
+        Text(label, style: EcoText.label.copyWith(fontSize: 10, color: EcoColors.outline)),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
           maxLines: maxLines,
-          style: EcoText.bodyStrong.copyWith(fontSize: 15),
+          style: EcoText.bodyStrong.copyWith(
+            fontSize: 15,
+            color: EcoColors.onSurface, // 👈 Explicit dark text
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: EcoText.body.copyWith(color: Colors.white30),
+            hintStyle: EcoText.body.copyWith(color: EcoColors.outline.withOpacity(0.5)),
             filled: true,
-            fillColor: Colors.white.withOpacity(0.06),
-            contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14, vertical: 14),
+            fillColor: EcoColors.bgLow,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.12)),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                  color: EcoColors.accentCool1, width: 1.5),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: EcoColors.primary, width: 1.5),
             ),
           ),
         ),

@@ -13,41 +13,64 @@ class BottomNavBar extends StatelessWidget {
   });
 
   static const _items = [
-    _NavItem(icon: Icons.home_rounded, label: 'Home'),
-    _NavItem(icon: Icons.show_chart_rounded, label: 'Graphs'),
-    _NavItem(icon: Icons.build_rounded, label: 'Service'),
+    _NavItem(icon: Icons.grid_view_rounded, label: 'Home'),
+    _NavItem(icon: Icons.equalizer_rounded, label: 'Graphs'),
+    _NavItem(icon: Icons.build_circle_outlined, label: 'Service'),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
+      height: 68,
       decoration: BoxDecoration(
-        color: EcoColors.bg2,
-        border: Border(
-          top: BorderSide(color: Colors.white.withOpacity(0.08), width: 1),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 70,
-          child: Row(
-            children: List.generate(_items.length, (i) {
-              final item = _items[i];
-              final selected = i == currentIndex;
-              return Expanded(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => onTap(i),
-                  child: _TabButton(
-                    item: item,
-                    selected: selected,
-                  ),
-                ),
-              );
-            }),
+        color: Colors.white.withOpacity(0.95),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: EcoColors.glassBorder),
+        boxShadow: [
+          BoxShadow(
+            color: EcoColors.onSurface.withOpacity(0.08),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
           ),
-        ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: List.generate(_items.length, (i) {
+          final item = _items[i];
+          final selected = i == currentIndex;
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => onTap(i),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: selected ? EcoColors.bgLow : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    item.icon,
+                    size: 22,
+                    color: selected ? EcoColors.onSurface : EcoColors.onSurfaceVariant,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    item.label,
+                    style: EcoText.label.copyWith(
+                      fontSize: 10,
+                      color: selected ? EcoColors.onSurface : EcoColors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -57,58 +80,4 @@ class _NavItem {
   final IconData icon;
   final String label;
   const _NavItem({required this.icon, required this.label});
-}
-
-class _TabButton extends StatelessWidget {
-  final _NavItem item;
-  final bool selected;
-
-  const _TabButton({required this.item, required this.selected});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeOutCubic,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-      decoration: BoxDecoration(
-        gradient: selected
-            ? const LinearGradient(
-          colors: EcoColors.coolGradient,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        )
-            : null,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: selected
-            ? [
-          BoxShadow(
-            color: EcoColors.accentCool1.withOpacity(0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ]
-            : null,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            item.icon,
-            size: 22,
-            color: selected ? Colors.white : Colors.white.withOpacity(0.5),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            item.label,
-            style: EcoText.label.copyWith(
-              fontSize: 10,
-              letterSpacing: 0.8,
-              color: selected ? Colors.white : Colors.white.withOpacity(0.4),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
